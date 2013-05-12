@@ -3,5 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="lib" path="miglayout15-swing.jar" sourcepath="miglayout-src.zip"/>
+	<classpathentry kind="lib" path="/home/paco/Escritorio/documentacion curso/entradasalida.jar"/>
+	<classpathentry kind="lib" path="/home/paco/Escritorio/documentacion curso/sqlite-jdbc-3.7.15-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
