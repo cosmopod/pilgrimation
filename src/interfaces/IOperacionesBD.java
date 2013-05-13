@@ -1,6 +1,8 @@
 package interfaces;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 import clases.Actividad;
 import clases.Peregrinacion;
@@ -9,31 +11,43 @@ import clases.Peregrino;
 public interface IOperacionesBD {
 
 	public void insertarPeregrino(int idPeregrinacion, String nombre,
-			String apellido1, String apellido2, String bus, String tipoHab);
+			String apellido1, String apellido2, String bus, String tipoHab, int cantidad, boolean pagado);
 
-	public void editarPeregrino(int idPeregrino);
+	public void editarPeregrino(int idPeregrino, int idPeregrinacion,
+			String nombre, String appelido1, String apellido2, String bus,
+			String tipoHab, int cantidad, boolean pagado);
 
 	public void eliminarPeregrino(int idPeregrino);
 
 	public void insertarPeregrinacion(String fecha, String lugar);
 
-	public void editarPeregrinacion(int idPeregrinacion);
+	public void editarPeregrinacion(int idPeregrinacion, String fecha,
+			String lugar);
 
 	public void eliminarPeregrinacion(int idPeregrinacion);
 
 	public void insertarActividad(int idPeregrinacion, String lugar,
 			String actividad, String fecha);
 
-	public void editarActividad(int idActividad);
+	public void editarActividad(int idActividad, int idPeregrinacion,
+			String lugar, String actividad, String fecha);
 
 	public void eliminarActividad(int idActividad);
 
-	public Peregrino obtenerPeregrino(int idPeregrino);
-
-	public Actividad obtenerActividad(int idActividad);
-
-	public Peregrinacion obtenerPeregrinacion(int idPeregrinacion);
+	public Peregrino obtenerPeregrino(int idPeregrino) throws SQLException;
 	
+	public ArrayList<Peregrino> totalPeregrinos();
+	
+	public ArrayList<Peregrino> peregrinosPagados();
+	
+	public Actividad obtenerActividad(int idActividad) throws SQLException;
+	
+	public ArrayList<Actividad> totalActividades();
+
+	public Peregrinacion obtenerPeregrinacion(int idPeregrinacion) throws SQLException;
+	
+	public ArrayList<Peregrinacion> totalPeregrinaciones();
+
 	public ResultSet ejecutarConsulta(String query);
 
 }

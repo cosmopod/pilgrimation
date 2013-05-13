@@ -9,9 +9,11 @@ public class Peregrino {
 	public String apellido2;
 	public String bus;
 	public String tipoHab;
+	public int cantidad;
+	public boolean pagado;
 	
 	public Peregrino(int id, int idPeregrinacion, String nombre,
-			String apellido1, String apellido2, String bus, String tipoHab) {
+			String apellido1, String apellido2, String bus, String tipoHab, int cantidad, boolean pagado) {
 		super();
 		this.id = id;
 		this.idPeregrinacion = idPeregrinacion;
@@ -20,6 +22,9 @@ public class Peregrino {
 		this.apellido2 = apellido2;
 		this.bus = bus;
 		this.tipoHab = tipoHab;
+		this.cantidad = cantidad;
+		this.pagado = pagado;
+		
 	}
 
 	public int getId() {
@@ -77,9 +82,24 @@ public class Peregrino {
 	public void setTipoHab(String tipoHab) {
 		this.tipoHab = tipoHab;
 	}
-	
-	
-	
-	
 
+	public int getCantidad() {
+		return cantidad;
+	}
+
+	public void setCantidad(int cantidad) {
+		this.cantidad = cantidad;
+	}
+
+	public boolean isPagado() {
+		return pagado;
+	}
+
+	public void setPagado(boolean pagado) {
+		this.pagado = pagado;
+	}
+	
+	
 }
+
+	
