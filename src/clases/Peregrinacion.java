@@ -36,4 +36,11 @@ public class Peregrinacion {
 		this.fecha = fecha;
 	}
 
+	@Override
+	public String toString() {
+	
+		return this.getId()+". Lugar: "+this.lugar+". Fecha: "+this.getFecha();
+	}
+
+	
 }

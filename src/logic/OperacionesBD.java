@@ -66,7 +66,6 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 
 	@Override
 	public void insertarPeregrinacion(String fecha, String lugar) {
-		
 
 		String query = "INSERT INTO peregrinaciones(fecha, lugar) VALUES("
 				+ q(fecha) + "," + q(lugar) + ")";
@@ -79,9 +78,9 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 	public void editarPeregrinacion(int idPeregrinacion, String fecha,
 			String lugar) {
 
-
-		String query = "UPDATE OR REPLACE peregrinaciones SET fecha=" + q(fecha)
-				+ ", lugar=" + q(lugar) + "WHERE id=" + idPeregrinacion;
+		String query = "UPDATE OR REPLACE peregrinaciones SET fecha="
+				+ q(fecha) + ", lugar=" + q(lugar) + "WHERE id="
+				+ idPeregrinacion;
 
 		ejecutarConsulta(query);
 
@@ -137,7 +136,7 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 	@Override
 	public Peregrino obtenerPeregrino(int idPeregrino) throws SQLException {
 
-		String query = "SELECT FROM peregrinos WHERE id=" + idPeregrino;
+		String query = "SELECT * FROM peregrinos WHERE id=" + idPeregrino;
 		resultSet = ejecutarConsulta(query);
 		Peregrino peregrino = new Peregrino(idPeregrino,
 				resultSet.getInt("id_peregrinaciones"),
@@ -152,8 +151,7 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 	@Override
 	public Actividad obtenerActividad(int idActividad) throws SQLException {
 
-		String query = "SELECT FROM peregrinacion.actividades WHERE id="
-				+ idActividad;
+		String query = "SELECT * FROM actividades WHERE id=" + idActividad;
 		resultSet = ejecutarConsulta(query);
 		Actividad actividad = new Actividad(idActividad,
 				resultSet.getInt("id_peregrinacion"),
@@ -167,7 +165,7 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 	public Peregrinacion obtenerPeregrinacion(int idPeregrinacion)
 			throws SQLException {
 
-		String query = "SELECT FROM peregrinaciones WHERE id="
+		String query = "SELECT * FROM peregrinaciones WHERE id="
 				+ idPeregrinacion;
 		resultSet = ejecutarConsulta(query);
 		Peregrinacion peregrinacion = new Peregrinacion(idPeregrinacion,
@@ -261,39 +259,33 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 		resultSet = ejecutarConsulta(query);
 		try {
 			while (resultSet.next()) {
-				Peregrinacion peregrinacion = new Peregrinacion(
-						resultSet.getInt("id"), resultSet.getString("lugar"),
-						resultSet.getString("fecha"));
-				peregrinaciones.add(peregrinacion);
+				peregrinaciones.add(new Peregrinacion(resultSet.getInt("id"),
+						resultSet.getString("lugar"), resultSet
+								.getString("fecha")));
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-
-		return peregrinaciones;
-	}
-
-	@Override
-	public ResultSet ejecutarConsulta(String query) {
-		ResultSet resultSet = null;
-		conectar();
-		try {
-			resultSet = consulta.executeQuery(query);
-
-		} catch (SQLException e) {
-
-			JOptionPane.showMessageDialog(null, e.getMessage());
-		} finally {
+		}finally{
 			try {
-				consulta.close();
 				conexion.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
+		return peregrinaciones;
+	}
 
-		return resultSet;
+	@Override
+	public ResultSet ejecutarConsulta(String query) {
+		conectar();
+		ResultSet resultado = null;
+		try {
+			resultado = consulta.executeQuery(query);
+		} catch (SQLException e) {
+			e.getMessage();
+		}
+
+		return resultado;
 	}
 
 	// Método para entrecomillar los campos en las consultas
