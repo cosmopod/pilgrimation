@@ -1,15 +1,19 @@
 package clases;
 
 public class Peregrinacion {
-	public int id;
-	public String lugar;
-	public String fecha;
+	private int id;
+	private String lugar;
+	private String fecha;
 
 	public Peregrinacion(int id, String lugar, String fecha) {
 		super();
 		this.id = id;
 		this.lugar = lugar;
 		this.fecha = fecha;
+	}
+	
+	public Peregrinacion(){
+		
 	}
 
 	public int getId() {

@@ -5,6 +5,8 @@ import interfaces.IOperacionesBD;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -23,7 +25,11 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import logic.OperacionesBD;
+import logic.Utilidades;
 import clases.Peregrinacion;
+import clases.Peregrino;
+
+import com.toedter.calendar.JDateChooser;
 
 public class Lista extends JFrame {
 
@@ -31,8 +37,15 @@ public class Lista extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	public IOperacionesBD operacionesBD = new OperacionesBD();
+	private IOperacionesBD operacionesBD = new OperacionesBD();
 	private JPanel contentPane;
+	private JComboBox comboBox;
+	private JButton btnNuevPeregrinacion;
+	private JButton btnuevPeregrino;
+	private JList listPeregrinos;
+	private Peregrino peregrino;
+	private Peregrinacion peregrinacion;
+	private Utilidades utilidades;
 
 	/**
 	 * Launch the application.
@@ -43,6 +56,7 @@ public class Lista extends JFrame {
 				try {
 					Lista frame = new Lista();
 					frame.setVisible(true);
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -68,16 +82,11 @@ public class Lista extends JFrame {
 		JPanel panel = new JPanel();
 		tabbedPane.addTab("Peregrinación", null, panel, null);
 
-		JComboBox comboBox = new JComboBox();
+		utilidades = new Utilidades();
 
-		ArrayList<Peregrinacion> peregrinaciones = operacionesBD
-				.totalPeregrinaciones();
-		Iterator it = peregrinaciones.iterator();
-		while (it.hasNext()) {
-			Peregrinacion numPeregrinacion = (Peregrinacion) it.next();
-			comboBox.addItem(numPeregrinacion.toString());
+		comboBox = new JComboBox();
 
-		}
+		utilidades.refreshPeregrinacionCombo(comboBox);
 
 		JLabel lblNewLabel = new JLabel("Listado de peregrinaciones");
 
@@ -85,9 +94,36 @@ public class Lista extends JFrame {
 
 		JLabel lblNewLabel_1 = new JLabel("Listado de peregrinos");
 
-		JButton btnNewButton = new JButton("Añadir Peregrinación");
+		btnNuevPeregrinacion = new JButton("Añadir Peregrinación");
+		btnNuevPeregrinacion.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 
-		JButton btnNewButton_1 = new JButton("Añadir Peregrino");
+				// Acción realizada al pulsar botón de inserción de
+				// peregrinación ==============================================
+
+				peregrinacion = utilidades.formPeregrinacion();
+
+				if (peregrinacion != null) {
+					operacionesBD.insertarPeregrinacion(
+							peregrinacion.getFecha(), peregrinacion.getLugar());
+					utilidades.refreshPeregrinacionCombo(comboBox);
+
+				}
+
+			}
+		});
+
+		btnuevPeregrino = new JButton("Añadir Peregrino");
+
+		// Evento inserción peregrino
+		// ==================================================
+		btnuevPeregrino.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				utilidades.formPeregrino();
+
+			}
+		});
 		GroupLayout gl_panel = new GroupLayout(panel);
 		gl_panel.setHorizontalGroup(gl_panel
 				.createParallelGroup(Alignment.LEADING)
@@ -129,11 +165,11 @@ public class Lista extends JFrame {
 																				.addGroup(
 																						gl_panel.createSequentialGroup()
 																								.addComponent(
-																										btnNewButton)
+																										btnNuevPeregrinacion)
 																								.addPreferredGap(
 																										ComponentPlacement.RELATED)
 																								.addComponent(
-																										btnNewButton_1))
+																										btnuevPeregrino))
 																				.addComponent(
 																						scrollPane,
 																						GroupLayout.PREFERRED_SIZE,
@@ -160,14 +196,15 @@ public class Lista extends JFrame {
 						.addGap(33)
 						.addGroup(
 								gl_panel.createParallelGroup(Alignment.LEADING)
-										.addComponent(btnNewButton)
-										.addComponent(btnNewButton_1))
+										.addComponent(btnNuevPeregrinacion)
+										.addComponent(btnuevPeregrino))
 						.addGap(52)));
 		gl_panel.linkSize(SwingConstants.HORIZONTAL, new Component[] {
-				btnNewButton, btnNewButton_1 });
+				btnNuevPeregrinacion, btnuevPeregrino });
 
-		JList listPeregrinos = new JList();
+		listPeregrinos = new JList();
 		scrollPane.setViewportView(listPeregrinos);
+
 		panel.setLayout(gl_panel);
 
 		JPanel panel_1 = new JPanel();
@@ -180,4 +217,5 @@ public class Lista extends JFrame {
 		tabbedPane.addTab("Actividades", null, panel_3, null);
 		setLocationRelativeTo(null);
 	}
+
 }

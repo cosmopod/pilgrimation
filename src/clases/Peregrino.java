@@ -2,15 +2,15 @@
 package clases;
 
 public class Peregrino {
-	public int id;
-	public int idPeregrinacion;
-	public String nombre;
-	public String apellido1;
-	public String apellido2;
-	public String bus;
-	public String tipoHab;
-	public int cantidad;
-	public boolean pagado;
+	private int id;
+	private int idPeregrinacion;
+	private String nombre;
+	private String apellido1;
+	private String apellido2;
+	private String bus;
+	private String tipoHab;
+	private int cantidad;
+	private boolean pagado;
 	
 	public Peregrino(int id, int idPeregrinacion, String nombre,
 			String apellido1, String apellido2, String bus, String tipoHab, int cantidad, boolean pagado) {
@@ -25,6 +25,9 @@ public class Peregrino {
 		this.cantidad = cantidad;
 		this.pagado = pagado;
 		
+	}
+	public Peregrino(){
+		super();
 	}
 
 	public int getId() {

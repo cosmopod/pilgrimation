@@ -5,5 +5,6 @@
 	<classpathentry kind="lib" path="miglayout15-swing.jar" sourcepath="miglayout-src.zip"/>
 	<classpathentry kind="lib" path="/home/paco/Escritorio/documentacion curso/entradasalida.jar"/>
 	<classpathentry kind="lib" path="/home/paco/Escritorio/documentacion curso/sqlite-jdbc-3.7.15-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="/home/paco/Escritorio/documentacion curso/jcalendar-1.3.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
