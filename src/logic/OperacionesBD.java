@@ -21,7 +21,7 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 			String apellido1, String apellido2, String bus, String tipoHab,
 			int cantidad, boolean pagado) {
 
-		String query = "INSERT INTO peregrinos(id_peregrinaciones, nombre, apellido1, apellido2, bus, tipo_hab, cantidad, pagado) VALUES ("
+		String query = "INSERT INTO peregrinos(id_peregrinacion, nombre, apellido1, apellido2, bus, tipo_hab, cantidad, pagado) VALUES ("
 				+ idPeregrinacion
 				+ ","
 				+ q(nombre)
@@ -34,7 +34,7 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 				+ ","
 				+ q(tipoHab)
 				+ ","
-				+ cantidad + "," + pagado + ")";
+				+ cantidad + "," + "'" + pagado + "'" + ")";
 
 		ejecutarConsulta(query);
 
@@ -45,7 +45,7 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 			String nombre, String apellido1, String apellido2, String bus,
 			String tipoHab, int cantidad, boolean pagado) {
 
-		String query = "UPDATE OR REPLACE peregrinos SET id_peregrinaciones ="
+		String query = "UPDATE OR REPLACE peregrinos SET id_peregrinacion ="
 				+ idPeregrinacion + ", nombre = " + q(nombre)
 				+ ", apellido1 = " + q(apellido1) + ", apellido2 ="
 				+ q(apellido2) + ", bus=" + q(bus) + ", tipo_hab ="
@@ -99,7 +99,7 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 	public void insertarActividad(int idPeregrinacion, String lugar,
 			String actividad, String fecha) {
 
-		String query = "INSERT INTO actividades(idPeregrinacion, lugar, actividad, fecha) VALUES("
+		String query = "INSERT INTO actividades(id_peregrinacion, lugar, actividad, fecha) VALUES("
 				+ idPeregrinacion
 				+ ","
 				+ q(lugar)
@@ -139,7 +139,7 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 		String query = "SELECT * FROM peregrinos WHERE id=" + idPeregrino;
 		resultSet = ejecutarConsulta(query);
 		Peregrino peregrino = new Peregrino(idPeregrino,
-				resultSet.getInt("id_peregrinaciones"),
+				resultSet.getInt("id_peregrinacion"),
 				resultSet.getString("nombre"),
 				resultSet.getString("apellido1"),
 				resultSet.getString("apellido2"), resultSet.getString("bus"),
@@ -174,14 +174,15 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 	}
 
 	@Override
-	public ArrayList<Peregrino> totalPeregrinos() {
+	public ArrayList<Peregrino> totalPeregrinos(int idPeregrinacion) {
 		ArrayList<Peregrino> peregrinos = new ArrayList<Peregrino>();
-		String query = "SELECT * FROM peregrinos";
+		String query = "SELECT * FROM peregrinos WHERE id_peregrinacion="
+				+ idPeregrinacion;
 		resultSet = ejecutarConsulta(query);
 		try {
 			while (resultSet.next()) {
 				Peregrino peregrino = new Peregrino(resultSet.getInt("id"),
-						resultSet.getInt("id_peregrinaciones"),
+						resultSet.getInt("id_peregrinacion"),
 						resultSet.getString("nombre"),
 						resultSet.getString("apellido1"),
 						resultSet.getString("apellido2"),
@@ -194,7 +195,7 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, e.getMessage());
 		}
 
 		return peregrinos;
@@ -209,7 +210,7 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 		try {
 			while (resultSet.next()) {
 				Peregrino peregrino = new Peregrino(resultSet.getInt("id"),
-						resultSet.getInt("id_peregrinaciones"),
+						resultSet.getInt("id_peregrinacion"),
 						resultSet.getString("nombre"),
 						resultSet.getString("apellido1"),
 						resultSet.getString("apellido2"),
@@ -223,7 +224,7 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, e.getMessage());
 		}
 
 		return peregrinos;
@@ -247,7 +248,7 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, e.getMessage());
 		}
 		return actividades;
 	}
@@ -264,12 +265,12 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 								.getString("fecha")));
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
-		}finally{
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		} finally {
 			try {
 				conexion.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				JOptionPane.showMessageDialog(null, e.getMessage());
 			}
 		}
 		return peregrinaciones;

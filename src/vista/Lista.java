@@ -7,9 +7,10 @@ import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
+import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -28,8 +29,6 @@ import logic.OperacionesBD;
 import logic.Utilidades;
 import clases.Peregrinacion;
 import clases.Peregrino;
-
-import com.toedter.calendar.JDateChooser;
 
 public class Lista extends JFrame {
 
@@ -95,35 +94,10 @@ public class Lista extends JFrame {
 		JLabel lblNewLabel_1 = new JLabel("Listado de peregrinos");
 
 		btnNuevPeregrinacion = new JButton("Añadir Peregrinación");
-		btnNuevPeregrinacion.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
 
-				// Acción realizada al pulsar botón de inserción de
-				// peregrinación ==============================================
-
-				peregrinacion = utilidades.formPeregrinacion();
-
-				if (peregrinacion != null) {
-					operacionesBD.insertarPeregrinacion(
-							peregrinacion.getFecha(), peregrinacion.getLugar());
-					utilidades.refreshPeregrinacionCombo(comboBox);
-
-				}
-
-			}
-		});
 
 		btnuevPeregrino = new JButton("Añadir Peregrino");
 
-		// Evento inserción peregrino
-		// ==================================================
-		btnuevPeregrino.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				utilidades.formPeregrino();
-
-			}
-		});
 		GroupLayout gl_panel = new GroupLayout(panel);
 		gl_panel.setHorizontalGroup(gl_panel
 				.createParallelGroup(Alignment.LEADING)
@@ -202,7 +176,10 @@ public class Lista extends JFrame {
 		gl_panel.linkSize(SwingConstants.HORIZONTAL, new Component[] {
 				btnNuevPeregrinacion, btnuevPeregrino });
 
-		listPeregrinos = new JList();
+		// listado peregrinos por peregrinación
+		DefaultListModel<String> miModelo = utilidades.peregrinoLista(comboBox);
+
+		listPeregrinos = new JList(miModelo);
 		scrollPane.setViewportView(listPeregrinos);
 
 		panel.setLayout(gl_panel);
@@ -216,6 +193,62 @@ public class Lista extends JFrame {
 		JPanel panel_3 = new JPanel();
 		tabbedPane.addTab("Actividades", null, panel_3, null);
 		setLocationRelativeTo(null);
+		
+		
+		// EVENTOS //////////////////////////////////////////////////
+
+		// Evento Refresco de la lista con el cambio de item del Combo
+		// =======================
+		comboBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				DefaultListModel<String> ultimoModelo = utilidades
+						.peregrinoLista(comboBox);
+				listPeregrinos.setModel(ultimoModelo);
+			}
+		});
+
+		// Evento inserción peregrino
+		// ==================================================
+		btnuevPeregrino.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				peregrino = utilidades.formPeregrino();
+
+				if (peregrino != null) {
+					operacionesBD.insertarPeregrino(
+							peregrino.getIdPeregrinacion(),
+							peregrino.getNombre(), peregrino.getApellido1(),
+							peregrino.getApellido2(), peregrino.getBus(),
+							peregrino.getTipoHab(), peregrino.getCantidad(),
+							peregrino.isPagado());
+				}
+				DefaultListModel<String> ultimoModelo = utilidades
+						.peregrinoLista(comboBox);
+				listPeregrinos.setModel(ultimoModelo);
+
+			}
+
+		});
+
+		// Evento inserción peregrinación =====================
+		btnNuevPeregrinacion.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				// Acción realizada al pulsar botón de inserción de
+				// peregrinación: REFRESCA ITEMS COMBOBOX
+				// ==============================================
+
+				peregrinacion = utilidades.formPeregrinacion();
+
+				if (peregrinacion != null) {
+					operacionesBD.insertarPeregrinacion(
+							peregrinacion.getFecha(), peregrinacion.getLugar());
+					utilidades.refreshPeregrinacionCombo(comboBox);
+
+				}
+
+			}
+		});
 	}
 
 }

@@ -36,7 +36,7 @@ public interface IOperacionesBD {
 
 	public Peregrino obtenerPeregrino(int idPeregrino) throws SQLException;
 	
-	public ArrayList<Peregrino> totalPeregrinos();
+	public ArrayList<Peregrino> totalPeregrinos(int idPeregrinacion);
 	
 	public ArrayList<Peregrino> peregrinosPagados();
 	
