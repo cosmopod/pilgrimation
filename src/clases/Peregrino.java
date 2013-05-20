@@ -1,4 +1,3 @@
-
 package clases;
 
 public class Peregrino {
@@ -11,9 +10,10 @@ public class Peregrino {
 	private String tipoHab;
 	private int cantidad;
 	private boolean pagado;
-	
+
 	public Peregrino(int id, int idPeregrinacion, String nombre,
-			String apellido1, String apellido2, String bus, String tipoHab, int cantidad, boolean pagado) {
+			String apellido1, String apellido2, String bus, String tipoHab,
+			int cantidad, boolean pagado) {
 		super();
 		this.id = id;
 		this.idPeregrinacion = idPeregrinacion;
@@ -24,9 +24,10 @@ public class Peregrino {
 		this.tipoHab = tipoHab;
 		this.cantidad = cantidad;
 		this.pagado = pagado;
-		
+
 	}
-	public Peregrino(){
+
+	public Peregrino() {
 		super();
 	}
 
@@ -101,8 +102,19 @@ public class Peregrino {
 	public void setPagado(boolean pagado) {
 		this.pagado = pagado;
 	}
-	
-	
-}
 
-	
+	@Override
+	public String toString() {
+		String debe;
+		if (isPagado() != true) {
+			debe = "NO";
+		} else {
+			debe = "SI";
+		}
+
+		return "" + getId() + ". "  + getNombre() + "  "
+				+ getApellido1() + "  " + getApellido2() + ". " + "CANTIDAD: "
+				+ getCantidad() + ". " + "PAGADO: " + debe;
+	}
+
+}

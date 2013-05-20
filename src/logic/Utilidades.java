@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -79,12 +80,12 @@ public class Utilidades {
 				idPeregrinacion = Integer.parseInt(idPeregString);
 				apellido1 = campoApellido1.getText();
 				apellido2 = campoApellido2.getText();
-				//asignamos el valor de los atributos del objeto Peregrino
+				// asignamos el valor de los atributos del objeto Peregrino
 				peregrino.setNombre(nombre);
 				peregrino.setApellido1(apellido1);
 				peregrino.setApellido2(apellido2);
 				peregrino.setIdPeregrinacion(idPeregrinacion);
-				
+
 			} else {
 				JOptionPane.showMessageDialog(panel,
 						"¡Debe introducir al menos un nombre!", "Atención",
@@ -155,7 +156,9 @@ public class Utilidades {
 
 	public void refreshPeregrinacionCombo(JComboBox comboBox) {
 
+		comboBox.removeAllItems();
 		comboBox.repaint();
+
 		ArrayList<Peregrinacion> peregrinaciones = operacionesBD
 				.totalPeregrinaciones();
 		Iterator it = peregrinaciones.iterator();
@@ -165,6 +168,29 @@ public class Utilidades {
 
 		}
 
+	}
+
+	public DefaultListModel<String> peregrinoLista(JComboBox comboBox) {
+
+		DefaultListModel<String> modeloLista = new DefaultListModel<String>();
+
+		if (comboBox.getSelectedItem() != null) {
+			String peregrinacion = comboBox.getSelectedItem().toString();
+
+			String[] arrayToString = peregrinacion.split("\\.");
+			String idPeregString = arrayToString[0];
+			int idPeregrinacion = Integer.parseInt(idPeregString);
+
+			ArrayList<Peregrino> arrayPeregrinos = operacionesBD
+					.totalPeregrinos(idPeregrinacion);
+			Iterator it = arrayPeregrinos.iterator();
+			while (it.hasNext()) {
+				Peregrino peregrino = (Peregrino) it.next();
+				modeloLista.addElement(peregrino.toString());
+			}
+		}
+
+		return modeloLista;
 	}
 
 }

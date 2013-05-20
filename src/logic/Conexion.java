@@ -18,8 +18,9 @@ public class Conexion {
 	public Conexion() {
 
 		recursos = getClass().getResource("peregrinacion");
-		rutaFinal = recursos.toString().substring(5,
-				recursos.toString().length());
+		//ruta "string" del archivo de la BD
+		rutaFinal = recursos.getFile();
+		
 	}
 
 	public void conectar() {
@@ -32,7 +33,7 @@ public class Conexion {
 			conexion = DriverManager.getConnection("jdbc:sqlite:" + rutaFinal);
 			consulta = conexion.createStatement();
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
+			JOptionPane.showMessageDialog(null, e.getLocalizedMessage());
 		}
 
 	}
