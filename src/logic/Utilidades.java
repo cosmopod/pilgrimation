@@ -3,17 +3,26 @@ package logic;
 import interfaces.IOperacionesBD;
 
 import java.awt.GridLayout;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
 
+import clases.FormPeregrinacion;
 import clases.Peregrinacion;
 import clases.Peregrino;
 
@@ -21,137 +30,41 @@ import com.toedter.calendar.JDateChooser;
 
 public class Utilidades {
 
-	private Peregrino peregrino;
-	private Peregrinacion peregrinacion;
+	private Peregrino miPeregrino;
+	private Peregrinacion miPeregrinacion;
+	private FormPeregrinacion formPeregrinacion;
 	private JComboBox comboBox;
 	private IOperacionesBD operacionesBD;
+	private boolean objetoEdicion = false;
 
 	public Utilidades() {
 
 		operacionesBD = new OperacionesBD();
+		formPeregrinacion = new FormPeregrinacion();
 	}
 
-	public Peregrino formPeregrino() {
 
-		Peregrino peregrino = new Peregrino();
-		JTextField campoNombre = new JTextField();
-		JTextField campoApellido1 = new JTextField();
-		JTextField campoApellido2 = new JTextField();
-		String nombre;
-		String apellido1;
-		String apellido2;
-		String idPeregString;
-		int idPeregrinacion;
 
-		// Creación de un JPanel donde enganchar los labels y áreas de texto
+	// FUNCIONES PARA LA GESTIÓN DE PEREGRINACIONES ///////////////////////
 
-		JPanel panel = new JPanel(new GridLayout(0, 1));
+	public Peregrinacion formInsertPeregrinacion() {
 
-		comboBox = new JComboBox();
-		// Rellena el comboBox con los datos de la BD
-		refreshPeregrinacionCombo(comboBox);
+		return formPeregrinacion.formularioInsertar();
 
-		panel.add(new JLabel("Peregrinación"));
-		panel.add(comboBox);
-		panel.add(new JLabel("Nombre"));
-		panel.add(campoNombre);
-		panel.add(new JLabel("Primer Apellido"));
-		panel.add(campoApellido1);
-		panel.add(new JLabel("Segundo Apellido"));
-		panel.add(campoApellido2);
-
-		int result = JOptionPane.showConfirmDialog(null, panel,
-				"Insertar Peregrino", JOptionPane.OK_OPTION,
-				JOptionPane.PLAIN_MESSAGE);
-
-		if (result == JOptionPane.OK_OPTION) {
-			nombre = campoNombre.getText();
-			if (nombre.length() > 0) {
-				String peregrinacionToString = comboBox.getSelectedItem()
-						.toString();
-				/*
-				 * En la siguiente línea descomponemos el resultado de
-				 * toString() cortando por el punto y lo guardamos en un array.
-				 * El primer elemento de ese array se corresponderá con el
-				 * miembro 'id' del objeto 'Peregrinacion'.
-				 */
-				String[] arrayToString = peregrinacionToString.split("\\.");
-				idPeregString = arrayToString[0];
-				idPeregrinacion = Integer.parseInt(idPeregString);
-				apellido1 = campoApellido1.getText();
-				apellido2 = campoApellido2.getText();
-				// asignamos el valor de los atributos del objeto Peregrino
-				peregrino.setNombre(nombre);
-				peregrino.setApellido1(apellido1);
-				peregrino.setApellido2(apellido2);
-				peregrino.setIdPeregrinacion(idPeregrinacion);
-
-			} else {
-				JOptionPane.showMessageDialog(panel,
-						"¡Debe introducir al menos un nombre!", "Atención",
-						JOptionPane.WARNING_MESSAGE);
-				this.formPeregrino();
-			}
-
-		} else {
-			peregrino = null;
-		}
-
-		return peregrino;
 	}
 
-	public Peregrinacion formPeregrinacion() {
+	public Peregrinacion formEditarPeregrinacion(Peregrinacion peregrinacion) {
 
-		peregrinacion = new Peregrinacion();
-		JTextField campoLugar = new JTextField();
-		JDateChooser dateChooser = new JDateChooser();
-		int dia, mes, anio;
+		return formPeregrinacion.formularioEditar(peregrinacion);
+	}
 
-		// Creación de un panel donde enganchar los campos, los labels y el
-		// JDateChooser
-		JPanel panel = new JPanel(new GridLayout(0, 1));
-		panel.add(new JLabel("Lugar"));
-		panel.add(campoLugar);
-		panel.add(new JLabel("Fecha"));
-		panel.add(dateChooser);
+	public void formEliminarPeregrinacion(int idPeregrinacion) {
 
-		// Creación del JOptionPane
-		int result = JOptionPane.showConfirmDialog(null, panel,
-				"Insertar Peregrinación", JOptionPane.OK_OPTION,
-				JOptionPane.PLAIN_MESSAGE);
-
-		if (result == JOptionPane.OK_OPTION) {
-			String lugar = campoLugar.getText();
-			if (lugar.length() > 0) {
-
-				if (dateChooser.getDate() != null) {
-					dia = dateChooser.getCalendar().get(Calendar.DAY_OF_MONTH);
-					mes = dateChooser.getCalendar().get(Calendar.MONTH);
-					anio = dateChooser.getCalendar().get(Calendar.YEAR);
-				} else {
-					dia = 0;
-					mes = 0;
-					anio = 0;
-				}
-
-				String fecha = dia + "-" + mes + "-" + anio;
-
-				// Asignación de la fecha y hora a un nuevo objeto
-
-				peregrinacion.setLugar(lugar);
-				peregrinacion.setFecha(fecha);
-			} else {
-
-				JOptionPane.showMessageDialog(panel,
-						"¡Debe introducir al menos un lugar!", "Atención",
-						JOptionPane.WARNING_MESSAGE);
-				this.formPeregrinacion();
-			}
-
-		} else {
-			peregrinacion = null;
+		int resultado = formPeregrinacion.eliminacionPeregrinacion();
+		if (resultado == JOptionPane.OK_OPTION) {
+			operacionesBD.eliminarPeregrinacion(idPeregrinacion);
 		}
-		return peregrinacion;
+
 	}
 
 	public void refreshPeregrinacionCombo(JComboBox comboBox) {
@@ -170,6 +83,139 @@ public class Utilidades {
 
 	}
 
+	public int peregrinacionIdCombo(JComboBox combo) {
+		String cadenaPeregrinacion = combo.getSelectedItem().toString();
+		String[] arrayCadenaPeregrinacion = cadenaPeregrinacion.split("\\.");
+		int idPeregrinacion = Integer.parseInt(arrayCadenaPeregrinacion[0]);
+
+		return idPeregrinacion;
+	}
+	
+	// FUNCIONES PARA LA GESTION DE PEREGRINOS //////////////////////////
+	
+	public Peregrino formPeregrino() {
+
+		// Creación de elementos del formulario ==========================
+		Peregrino peregrino = new Peregrino();
+		JTextField campoNombre = new JTextField();
+		JTextField campoApellido1 = new JTextField();
+		JTextField campoApellido2 = new JTextField();
+		SpinnerModel smBus = new SpinnerNumberModel(0, 0, 5, 1);
+		JSpinner spinnerBus = new JSpinner(smBus);
+		String[] tipoHabitacion = { "Simple", "Doble", "Triple", "Cuádruple",
+				"Otras" };
+		JComboBox comboHabitacion = new JComboBox(tipoHabitacion);
+		SpinnerModel smCantidadLiquidada = new SpinnerNumberModel(0, 0, 10000,
+				1);
+		JSpinner spnCantidadLiquidada = new JSpinner(smCantidadLiquidada);
+		JTextField campoTelefono = new JTextField();
+		String[] pagadoNoPagado = { "Pagado", "No pagado" };
+		JComboBox comboLiquidacion = new JComboBox(pagadoNoPagado);
+		JTextField TextTelefono = new JTextField();
+
+		// Declaración de las variables donde almacenar los valores del
+		// formulario
+
+		int idPeregrinacion;
+		String idPeregString;
+		String nombre;
+		String apellido1;
+		String apellido2;
+		String bus;
+		String habitacion;
+		int cantidadLiquidada;
+		Boolean liquidacion;
+		String telefono;
+
+		// Creación de un JPanel donde enganchar los labels y áreas de texto
+
+		JPanel panel = new JPanel(new GridLayout(0, 1));
+
+		comboBox = new JComboBox();
+
+		// Rellena el comboBox con los datos de la BD y se agregan los
+		// componentes al panel
+		refreshPeregrinacionCombo(comboBox);
+
+		panel.add(new JLabel("Peregrinación"));
+		panel.add(comboBox);
+		panel.add(new JLabel("Nombre"));
+		panel.add(campoNombre);
+		panel.add(new JLabel("Primer apellido"));
+		panel.add(campoApellido1);
+		panel.add(new JLabel("Segundo apellido"));
+		panel.add(campoApellido2);
+		panel.add(new JLabel("Autobus"));
+		panel.add(spinnerBus);
+		panel.add(new JLabel("Habitacion"));
+		panel.add(comboHabitacion);
+		panel.add(new JLabel("Cantidad abonada"));
+		panel.add(spnCantidadLiquidada);
+		panel.add(new JLabel("Liquidación"));
+		panel.add(comboLiquidacion);
+		panel.add(new JLabel("Teléfono"));
+		panel.add(TextTelefono);
+
+		int result = JOptionPane.showConfirmDialog(null, panel,
+				"Insertar Peregrino", JOptionPane.OK_OPTION,
+				JOptionPane.PLAIN_MESSAGE);
+
+		if (result == JOptionPane.OK_OPTION) {
+			nombre = campoNombre.getText();
+			if (nombre.length() > 0) {
+				String peregrinacionToString = comboBox.getSelectedItem()
+						.toString();
+				/*
+				 * En la siguiente línea descomponemos el resultado de
+				 * toString() cortando por el punto y lo guardamos en un array.
+				 * El primer elemento de ese array se corresponderá con el
+				 * miembro 'id' del objeto 'Peregrinación'.
+				 */
+				String[] arrayToString = peregrinacionToString.split("\\.");
+				idPeregString = arrayToString[0];
+				idPeregrinacion = Integer.parseInt(idPeregString);
+				apellido1 = campoApellido1.getText();
+				apellido2 = campoApellido2.getText();
+				bus = spinnerBus.getValue().toString();
+				habitacion = comboHabitacion.getSelectedItem().toString();
+				cantidadLiquidada = Integer.parseInt(spnCantidadLiquidada
+						.getValue().toString());
+				// poner liquidación ==================
+				String estadoLiquidacion = comboLiquidacion.getSelectedItem()
+						.toString();
+				if (estadoLiquidacion.equalsIgnoreCase("Pagado")) {
+					liquidacion = true;
+				} else {
+					liquidacion = false;
+				}
+
+				telefono = TextTelefono.getText();
+
+				// asignamos el valor de los atributos del objeto Peregrino
+				peregrino.setNombre(nombre);
+				peregrino.setApellido1(apellido1);
+				peregrino.setApellido2(apellido2);
+				peregrino.setIdPeregrinacion(idPeregrinacion);
+				peregrino.setPagado(liquidacion);
+				peregrino.setTelefono(telefono);
+				peregrino.setBus(bus);
+				peregrino.setCantidad(cantidadLiquidada);
+				peregrino.setTipoHab(habitacion);
+
+			} else {
+				JOptionPane.showMessageDialog(panel,
+						"¡Debe introducir al menos un nombre!", "Atención",
+						JOptionPane.WARNING_MESSAGE);
+				this.formPeregrino();
+			}
+
+		} else {
+			peregrino = null;
+		}
+
+		return peregrino;
+	}
+	
 	public DefaultListModel<String> peregrinoLista(JComboBox comboBox) {
 
 		DefaultListModel<String> modeloLista = new DefaultListModel<String>();
@@ -192,5 +238,7 @@ public class Utilidades {
 
 		return modeloLista;
 	}
+
+	
 
 }

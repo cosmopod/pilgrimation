@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.sql.SQLException;
 
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
@@ -29,6 +30,8 @@ import logic.OperacionesBD;
 import logic.Utilidades;
 import clases.Peregrinacion;
 import clases.Peregrino;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class Lista extends JFrame {
 
@@ -45,6 +48,8 @@ public class Lista extends JFrame {
 	private Peregrino peregrino;
 	private Peregrinacion peregrinacion;
 	private Utilidades utilidades;
+	private JButton btnEditPeregrinacion;
+	private JButton btnEditarPeregrino;
 
 	/**
 	 * Launch the application.
@@ -67,6 +72,7 @@ public class Lista extends JFrame {
 	 * Create the frame.
 	 */
 	public Lista() {
+		setResizable(false);
 		setTitle("Pilgrimation");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
@@ -84,6 +90,8 @@ public class Lista extends JFrame {
 		utilidades = new Utilidades();
 
 		comboBox = new JComboBox();
+		
+		
 
 		utilidades.refreshPeregrinacionCombo(comboBox);
 
@@ -95,8 +103,14 @@ public class Lista extends JFrame {
 
 		btnNuevPeregrinacion = new JButton("Añadir Peregrinación");
 
-
 		btnuevPeregrino = new JButton("Añadir Peregrino");
+
+		btnEditPeregrinacion = new JButton(
+				"<html><center><p>Editar<br />Peregrinación</p></center></html>");
+		
+
+		btnEditarPeregrino = new JButton(
+				"<html><center><p>Editar<br />Peregrino</p></center></html>");
 
 		GroupLayout gl_panel = new GroupLayout(panel);
 		gl_panel.setHorizontalGroup(gl_panel
@@ -107,22 +121,6 @@ public class Lista extends JFrame {
 								.addGroup(
 										gl_panel.createParallelGroup(
 												Alignment.LEADING)
-												.addGroup(
-														gl_panel.createSequentialGroup()
-																.addComponent(
-																		comboBox,
-																		GroupLayout.PREFERRED_SIZE,
-																		289,
-																		GroupLayout.PREFERRED_SIZE)
-																.addGap(435))
-												.addGroup(
-														gl_panel.createSequentialGroup()
-																.addComponent(
-																		lblNewLabel,
-																		GroupLayout.PREFERRED_SIZE,
-																		212,
-																		GroupLayout.PREFERRED_SIZE)
-																.addGap(512))
 												.addGroup(
 														gl_panel.createSequentialGroup()
 																.addComponent(
@@ -149,30 +147,80 @@ public class Lista extends JFrame {
 																						GroupLayout.PREFERRED_SIZE,
 																						623,
 																						GroupLayout.PREFERRED_SIZE))
-																.addGap(101)))
+																.addGap(101))
+												.addGroup(
+														gl_panel.createSequentialGroup()
+																.addGroup(
+																		gl_panel.createParallelGroup(
+																				Alignment.LEADING)
+																				.addComponent(
+																						comboBox,
+																						GroupLayout.PREFERRED_SIZE,
+																						289,
+																						GroupLayout.PREFERRED_SIZE)
+																				.addComponent(
+																						lblNewLabel,
+																						GroupLayout.PREFERRED_SIZE,
+																						212,
+																						GroupLayout.PREFERRED_SIZE))
+																.addGap(58)
+																.addComponent(
+																		btnEditPeregrinacion,
+																		GroupLayout.PREFERRED_SIZE,
+																		127,
+																		GroupLayout.PREFERRED_SIZE)
+																.addGap(18)
+																.addComponent(
+																		btnEditarPeregrino,
+																		GroupLayout.PREFERRED_SIZE,
+																		127,
+																		GroupLayout.PREFERRED_SIZE)))
 								.addGap(99)));
-		gl_panel.setVerticalGroup(gl_panel.createParallelGroup(
-				Alignment.LEADING).addGroup(
-				gl_panel.createSequentialGroup()
-						.addGap(47)
-						.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE,
-								52, GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 39,
-								GroupLayout.PREFERRED_SIZE)
-						.addGap(35)
-						.addComponent(lblNewLabel_1,
-								GroupLayout.PREFERRED_SIZE, 21,
-								GroupLayout.PREFERRED_SIZE)
-						.addGap(18)
-						.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE,
-								235, GroupLayout.PREFERRED_SIZE)
-						.addGap(33)
-						.addGroup(
-								gl_panel.createParallelGroup(Alignment.LEADING)
-										.addComponent(btnNuevPeregrinacion)
-										.addComponent(btnuevPeregrino))
-						.addGap(52)));
+		gl_panel.setVerticalGroup(gl_panel
+				.createParallelGroup(Alignment.LEADING)
+				.addGroup(
+						gl_panel.createSequentialGroup()
+								.addGap(42)
+								.addGroup(
+										gl_panel.createParallelGroup(
+												Alignment.LEADING)
+												.addComponent(
+														btnEditPeregrinacion,
+														Alignment.TRAILING,
+														GroupLayout.DEFAULT_SIZE,
+														97, Short.MAX_VALUE)
+												.addComponent(
+														btnEditarPeregrino,
+														Alignment.TRAILING,
+														GroupLayout.PREFERRED_SIZE,
+														97,
+														GroupLayout.PREFERRED_SIZE))
+								.addGap(40)
+								.addComponent(lblNewLabel_1,
+										GroupLayout.PREFERRED_SIZE, 21,
+										GroupLayout.PREFERRED_SIZE)
+								.addGap(18)
+								.addComponent(scrollPane,
+										GroupLayout.PREFERRED_SIZE, 235,
+										GroupLayout.PREFERRED_SIZE)
+								.addGap(33)
+								.addGroup(
+										gl_panel.createParallelGroup(
+												Alignment.LEADING)
+												.addComponent(
+														btnNuevPeregrinacion)
+												.addComponent(btnuevPeregrino))
+								.addGap(52))
+				.addGroup(
+						gl_panel.createSequentialGroup()
+								.addGap(47)
+								.addComponent(lblNewLabel,
+										GroupLayout.PREFERRED_SIZE, 52,
+										GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addComponent(comboBox,
+										GroupLayout.PREFERRED_SIZE, 39,
+										GroupLayout.PREFERRED_SIZE).addGap(419)));
 		gl_panel.linkSize(SwingConstants.HORIZONTAL, new Component[] {
 				btnNuevPeregrinacion, btnuevPeregrino });
 
@@ -193,8 +241,7 @@ public class Lista extends JFrame {
 		JPanel panel_3 = new JPanel();
 		tabbedPane.addTab("Actividades", null, panel_3, null);
 		setLocationRelativeTo(null);
-		
-		
+
 		// EVENTOS //////////////////////////////////////////////////
 
 		// Evento Refresco de la lista con el cambio de item del Combo
@@ -215,12 +262,14 @@ public class Lista extends JFrame {
 				peregrino = utilidades.formPeregrino();
 
 				if (peregrino != null) {
+
 					operacionesBD.insertarPeregrino(
-							peregrino.getIdPeregrinacion(),
-							peregrino.getNombre(), peregrino.getApellido1(),
-							peregrino.getApellido2(), peregrino.getBus(),
-							peregrino.getTipoHab(), peregrino.getCantidad(),
-							peregrino.isPagado());
+
+					peregrino.getIdPeregrinacion(), peregrino.getNombre(),
+							peregrino.getApellido1(), peregrino.getApellido2(),
+							peregrino.getBus(), peregrino.getTipoHab(),
+							peregrino.getCantidad(), peregrino.isPagado(),
+							peregrino.getTelefono());
 				}
 				DefaultListModel<String> ultimoModelo = utilidades
 						.peregrinoLista(comboBox);
@@ -238,7 +287,7 @@ public class Lista extends JFrame {
 				// peregrinación: REFRESCA ITEMS COMBOBOX
 				// ==============================================
 
-				peregrinacion = utilidades.formPeregrinacion();
+				peregrinacion = utilidades.formInsertPeregrinacion();
 
 				if (peregrinacion != null) {
 					operacionesBD.insertarPeregrinacion(
@@ -249,6 +298,46 @@ public class Lista extends JFrame {
 
 			}
 		});
+
+		// Evento pata edición de peregrinación
+		btnEditPeregrinacion.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				int idPeregrinacion = utilidades.peregrinacionIdCombo(comboBox);
+						
+				try {
+					peregrinacion = operacionesBD
+							.obtenerPeregrinacion(idPeregrinacion);
+					peregrinacion = utilidades
+							.formEditarPeregrinacion(peregrinacion);
+
+					if (peregrinacion != null) {
+						operacionesBD.editarPeregrinacion(
+								peregrinacion.getId(),
+								peregrinacion.getLugar(),
+								peregrinacion.getFecha());
+
+						utilidades.refreshPeregrinacionCombo(comboBox);
+					}
+
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+
+			}
+		});
+	
+		// Evento para la eliminación de peregrinación
+		comboBox.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				
+				int idPeregrinacion = utilidades.peregrinacionIdCombo(comboBox);
+				utilidades.formEliminarPeregrinacion(idPeregrinacion);
+				utilidades.refreshPeregrinacionCombo(comboBox);
+			}
+		});
+
 	}
 
 }

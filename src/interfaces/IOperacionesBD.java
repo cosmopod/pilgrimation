@@ -11,18 +11,18 @@ import clases.Peregrino;
 public interface IOperacionesBD {
 
 	public void insertarPeregrino(int idPeregrinacion, String nombre,
-			String apellido1, String apellido2, String bus, String tipoHab, int cantidad, boolean pagado);
+			String apellido1, String apellido2, String bus, String tipoHab, int cantidad, boolean pagado, String telefono);
 
 	public void editarPeregrino(int idPeregrino, int idPeregrinacion,
 			String nombre, String appelido1, String apellido2, String bus,
-			String tipoHab, int cantidad, boolean pagado);
+			String tipoHab, int cantidad, boolean pagado, String telefono);
 
 	public void eliminarPeregrino(int idPeregrino);
 
 	public void insertarPeregrinacion(String fecha, String lugar);
 
-	public void editarPeregrinacion(int idPeregrinacion, String fecha,
-			String lugar);
+	public void editarPeregrinacion(int idPeregrinacion, String lugar,
+			String fecha);
 
 	public void eliminarPeregrinacion(int idPeregrinacion);
 
@@ -48,6 +48,6 @@ public interface IOperacionesBD {
 	
 	public ArrayList<Peregrinacion> totalPeregrinaciones();
 
-	public ResultSet ejecutarConsulta(String query);
+	
 
 }

@@ -19,9 +19,11 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 	@Override
 	public void insertarPeregrino(int idPeregrinacion, String nombre,
 			String apellido1, String apellido2, String bus, String tipoHab,
-			int cantidad, boolean pagado) {
+			int cantidad, boolean pagado, String telefono) {
 
-		String query = "INSERT INTO peregrinos(id_peregrinacion, nombre, apellido1, apellido2, bus, tipo_hab, cantidad, pagado) VALUES ("
+		int valorPagado = pagado ? 1 : 0;
+
+		String query = "INSERT INTO peregrinos(id_peregrinacion, nombre, apellido1, apellido2, bus, tipo_hab, cantidad, pagado, telefono) VALUES ("
 				+ idPeregrinacion
 				+ ","
 				+ q(nombre)
@@ -34,25 +36,28 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 				+ ","
 				+ q(tipoHab)
 				+ ","
-				+ cantidad + "," + "'" + pagado + "'" + ")";
+				+ cantidad + "," + valorPagado + "," + q(telefono) + ")";
 
 		ejecutarConsulta(query);
+		cerrarConexion();
+		
 
 	}
 
 	@Override
 	public void editarPeregrino(int idPeregrino, int idPeregrinacion,
 			String nombre, String apellido1, String apellido2, String bus,
-			String tipoHab, int cantidad, boolean pagado) {
+			String tipoHab, int cantidad, boolean pagado, String telefono) {
 
 		String query = "UPDATE OR REPLACE peregrinos SET id_peregrinacion ="
 				+ idPeregrinacion + ", nombre = " + q(nombre)
 				+ ", apellido1 = " + q(apellido1) + ", apellido2 ="
 				+ q(apellido2) + ", bus=" + q(bus) + ", tipo_hab ="
 				+ q(tipoHab) + ", cantidad=" + cantidad + ", pagado=" + pagado
-				+ " WHERE id =" + idPeregrino;
+				+ ", telefono=" + telefono + " WHERE id =" + idPeregrino;
 
 		ejecutarConsulta(query);
+		cerrarConexion();
 
 	}
 
@@ -61,6 +66,7 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 
 		String query = "DELETE FROM peregrinos WHERE id=" + idPeregrino;
 		ejecutarConsulta(query);
+		cerrarConexion();
 
 	}
 
@@ -71,18 +77,20 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 				+ q(fecha) + "," + q(lugar) + ")";
 
 		ejecutarConsulta(query);
+		cerrarConexion();
 
 	}
 
 	@Override
-	public void editarPeregrinacion(int idPeregrinacion, String fecha,
-			String lugar) {
+	public void editarPeregrinacion(int idPeregrinacion, String lugar,
+			String fecha) {
 
-		String query = "UPDATE OR REPLACE peregrinaciones SET fecha="
-				+ q(fecha) + ", lugar=" + q(lugar) + "WHERE id="
+		String query = "UPDATE OR REPLACE peregrinaciones SET lugar="
+				+ q(lugar) + ", fecha=" + q(fecha) + " WHERE id="
 				+ idPeregrinacion;
 
 		ejecutarConsulta(query);
+		cerrarConexion();
 
 	}
 
@@ -92,6 +100,7 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 		String query = "DELETE FROM peregrinaciones WHERE id="
 				+ idPeregrinacion;
 		ejecutarConsulta(query);
+		cerrarConexion();
 
 	}
 
@@ -109,6 +118,7 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 				+ q(fecha) + ")";
 
 		ejecutarConsulta(query);
+		cerrarConexion();
 
 	}
 
@@ -122,6 +132,7 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 				+ idActividad;
 
 		ejecutarConsulta(query);
+		cerrarConexion();
 
 	}
 
@@ -130,6 +141,8 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 
 		String query = "DELETE FROM actividades WHERE id=" + idActividad;
 		ejecutarConsulta(query);
+		cerrarConexion();
+		
 
 	}
 
@@ -138,13 +151,15 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 
 		String query = "SELECT * FROM peregrinos WHERE id=" + idPeregrino;
 		resultSet = ejecutarConsulta(query);
+		
 		Peregrino peregrino = new Peregrino(idPeregrino,
 				resultSet.getInt("id_peregrinacion"),
 				resultSet.getString("nombre"),
 				resultSet.getString("apellido1"),
 				resultSet.getString("apellido2"), resultSet.getString("bus"),
 				resultSet.getString("tipo_hab"), resultSet.getInt("cantidad"),
-				resultSet.getBoolean("pagado"));
+				resultSet.getBoolean("pagado"), resultSet.getString("telefono"));
+		cerrarConexion();
 		return peregrino;
 	}
 
@@ -157,7 +172,7 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 				resultSet.getInt("id_peregrinacion"),
 				resultSet.getString("lugar"), resultSet.getString("actividad"),
 				resultSet.getString("fecha"));
-
+		cerrarConexion();
 		return actividad;
 	}
 
@@ -170,6 +185,7 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 		resultSet = ejecutarConsulta(query);
 		Peregrinacion peregrinacion = new Peregrinacion(idPeregrinacion,
 				resultSet.getString("lugar"), resultSet.getString("fecha"));
+		cerrarConexion();
 		return peregrinacion;
 	}
 
@@ -189,7 +205,8 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 						resultSet.getString("bus"),
 						resultSet.getString("tipo_hab"),
 						resultSet.getInt("cantidad"),
-						resultSet.getBoolean("pagado"));
+						resultSet.getBoolean("pagado"),
+						resultSet.getString("telefono"));
 
 				peregrinos.add(peregrino);
 			}
@@ -197,7 +214,7 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 			// TODO Auto-generated catch block
 			JOptionPane.showMessageDialog(null, e.getMessage());
 		}
-
+		cerrarConexion();
 		return peregrinos;
 	}
 
@@ -217,7 +234,8 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 						resultSet.getString("bus"),
 						resultSet.getString("tipo_hab"),
 						resultSet.getInt("cantidad"),
-						resultSet.getBoolean("pagado"));
+						resultSet.getBoolean("pagado"),
+						resultSet.getString("telefono"));
 
 				peregrinos.add(peregrino);
 
@@ -226,7 +244,7 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 			// TODO Auto-generated catch block
 			JOptionPane.showMessageDialog(null, e.getMessage());
 		}
-
+		cerrarConexion();
 		return peregrinos;
 	}
 
@@ -250,6 +268,7 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 			// TODO Auto-generated catch block
 			JOptionPane.showMessageDialog(null, e.getMessage());
 		}
+		cerrarConexion();
 		return actividades;
 	}
 
@@ -267,27 +286,33 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 		} finally {
-			try {
-				conexion.close();
-			} catch (SQLException e) {
-				JOptionPane.showMessageDialog(null, e.getMessage());
-			}
+			cerrarConexion();
 		}
 		return peregrinaciones;
 	}
 
-	@Override
-	public ResultSet ejecutarConsulta(String query) {
+	
+	private ResultSet ejecutarConsulta(String query) {
 		conectar();
+		
 		ResultSet resultado = null;
 		try {
 			resultado = consulta.executeQuery(query);
+			
 		} catch (SQLException e) {
-			e.getMessage();
+			// JOptionPane.showMessageDialog(null, e.getMessage());
 		}
-
+		
 		return resultado;
 	}
+	private void cerrarConexion(){
+		try {
+			conexion.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getErrorCode());
+		}
+	}
+	
 
 	// Método para entrecomillar los campos en las consultas
 	private String q(String s) {
