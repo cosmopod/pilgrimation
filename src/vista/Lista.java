@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 
 import javax.swing.DefaultListModel;
@@ -19,6 +21,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -26,12 +29,11 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import logic.Controlador;
 import logic.OperacionesBD;
 import logic.Utilidades;
 import clases.Peregrinacion;
 import clases.Peregrino;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class Lista extends JFrame {
 
@@ -47,6 +49,7 @@ public class Lista extends JFrame {
 	private JList listPeregrinos;
 	private Peregrino peregrino;
 	private Peregrinacion peregrinacion;
+	private Controlador controlador;
 	private Utilidades utilidades;
 	private JButton btnEditPeregrinacion;
 	private JButton btnEditarPeregrino;
@@ -87,11 +90,10 @@ public class Lista extends JFrame {
 		JPanel panel = new JPanel();
 		tabbedPane.addTab("Peregrinación", null, panel, null);
 
+		controlador = new Controlador();
 		utilidades = new Utilidades();
 
 		comboBox = new JComboBox();
-		
-		
 
 		utilidades.refreshPeregrinacionCombo(comboBox);
 
@@ -107,7 +109,6 @@ public class Lista extends JFrame {
 
 		btnEditPeregrinacion = new JButton(
 				"<html><center><p>Editar<br />Peregrinación</p></center></html>");
-		
 
 		btnEditarPeregrino = new JButton(
 				"<html><center><p>Editar<br />Peregrino</p></center></html>");
@@ -225,7 +226,8 @@ public class Lista extends JFrame {
 				btnNuevPeregrinacion, btnuevPeregrino });
 
 		// listado peregrinos por peregrinación
-		DefaultListModel<String> miModelo = utilidades.peregrinoLista(comboBox);
+		DefaultListModel<String> miModelo = controlador
+				.peregrinoLista(comboBox);
 
 		listPeregrinos = new JList(miModelo);
 		scrollPane.setViewportView(listPeregrinos);
@@ -248,7 +250,7 @@ public class Lista extends JFrame {
 		// =======================
 		comboBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				DefaultListModel<String> ultimoModelo = utilidades
+				DefaultListModel<String> ultimoModelo = controlador
 						.peregrinoLista(comboBox);
 				listPeregrinos.setModel(ultimoModelo);
 			}
@@ -258,23 +260,10 @@ public class Lista extends JFrame {
 		// ==================================================
 		btnuevPeregrino.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
-				peregrino = utilidades.formPeregrino();
-
-				if (peregrino != null) {
-
-					operacionesBD.insertarPeregrino(
-
-					peregrino.getIdPeregrinacion(), peregrino.getNombre(),
-							peregrino.getApellido1(), peregrino.getApellido2(),
-							peregrino.getBus(), peregrino.getTipoHab(),
-							peregrino.getCantidad(), peregrino.isPagado(),
-							peregrino.getTelefono());
-				}
-				DefaultListModel<String> ultimoModelo = utilidades
+				controlador.formInsertarPeregrino(comboBox);
+				DefaultListModel<String> ultimoModelo = controlador
 						.peregrinoLista(comboBox);
 				listPeregrinos.setModel(ultimoModelo);
-
 			}
 
 		});
@@ -287,7 +276,7 @@ public class Lista extends JFrame {
 				// peregrinación: REFRESCA ITEMS COMBOBOX
 				// ==============================================
 
-				peregrinacion = utilidades.formInsertPeregrinacion();
+				peregrinacion = controlador.formInsertPeregrinacion();
 
 				if (peregrinacion != null) {
 					operacionesBD.insertarPeregrinacion(
@@ -304,40 +293,48 @@ public class Lista extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 
 				int idPeregrinacion = utilidades.peregrinacionIdCombo(comboBox);
-						
-				try {
-					peregrinacion = operacionesBD
-							.obtenerPeregrinacion(idPeregrinacion);
-					peregrinacion = utilidades
-							.formEditarPeregrinacion(peregrinacion);
+				if (idPeregrinacion != 0) {
 
-					if (peregrinacion != null) {
-						operacionesBD.editarPeregrinacion(
-								peregrinacion.getId(),
-								peregrinacion.getLugar(),
-								peregrinacion.getFecha());
+					try {
+						peregrinacion = operacionesBD
+								.obtenerPeregrinacion(idPeregrinacion);
+						peregrinacion = controlador
+								.formEditarPeregrinacion(peregrinacion);
 
-						utilidades.refreshPeregrinacionCombo(comboBox);
+						if (peregrinacion != null) {
+							operacionesBD.editarPeregrinacion(
+									peregrinacion.getId(),
+									peregrinacion.getLugar(),
+									peregrinacion.getFecha());
+
+							utilidades.refreshPeregrinacionCombo(comboBox);
+						}
+
+					} catch (SQLException e1) {
+						e1.printStackTrace();
 					}
-
-				} catch (SQLException e1) {
-					e1.printStackTrace();
+				}else{
+					JOptionPane.showMessageDialog(null, "¡Debe añadir antes una peregrinación");
 				}
 
 			}
 		});
-	
+
 		// Evento para la eliminación de peregrinación
 		comboBox.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				
+
 				int idPeregrinacion = utilidades.peregrinacionIdCombo(comboBox);
-				utilidades.formEliminarPeregrinacion(idPeregrinacion);
-				utilidades.refreshPeregrinacionCombo(comboBox);
+				if (idPeregrinacion != 0) {
+					if (controlador.formEliminarPeregrinacion(idPeregrinacion)) {
+						utilidades.refreshPeregrinacionCombo(comboBox);
+					}
+				} else {
+					btnNuevPeregrinacion.requestFocus();
+				}
 			}
 		});
 
 	}
-
 }

@@ -11,18 +11,20 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import logic.Controlador;
 import logic.Utilidades;
 
 import com.toedter.calendar.JDateChooser;
 
 public class FormPeregrinacion {
 
-	Peregrinacion peregrinacion;
-	JTextField campoLugar;
-	JDateChooser dateChooser;
-	JPanel panel;
-	JLabel labelLugar;
-	JLabel labelFecha;
+	private Peregrinacion peregrinacion;
+	private JTextField campoLugar;
+	private JDateChooser dateChooser;
+	private JPanel panel;
+	private JLabel labelLugar;
+	private JLabel labelFecha;
+	private Utilidades utilidades;
 
 	public FormPeregrinacion() {
 		super();
@@ -32,15 +34,13 @@ public class FormPeregrinacion {
 		panel = new JPanel(new GridLayout(0, 1));
 		labelLugar = new JLabel("Lugar");
 		labelFecha = new JLabel("Fecha");
+		utilidades = new Utilidades();
 
 	}
 
 	public Peregrinacion formularioInsertar() {
 
-		if (!isObjeto(labelLugar) || !isObjeto(labelFecha)) {
-			labelLugar = new JLabel("Lugar");
-			labelFecha = new JLabel("Fecha");
-		}
+		instanciaLabels();
 		dateChooser.setDate(null);
 		campoLugar.setText(null);
 		panel.add(labelLugar);
@@ -49,7 +49,7 @@ public class FormPeregrinacion {
 		panel.add(dateChooser);
 
 		int result = JOptionPane.showConfirmDialog(null, panel,
-				"Insertar Peregrino", JOptionPane.OK_OPTION,
+				"Añadir Peregrinación", JOptionPane.OK_OPTION,
 				JOptionPane.PLAIN_MESSAGE);
 		if (result == JOptionPane.OK_OPTION) {
 
@@ -89,18 +89,14 @@ public class FormPeregrinacion {
 		}
 		dateChooser.setDate(date);
 
-		if (!isObjeto(labelLugar) || !isObjeto(labelFecha)) {
-			labelLugar = new JLabel("Lugar");
-			labelFecha = new JLabel("Fecha");
-		}
-
+		instanciaLabels();
 		panel.add(labelLugar);
 		panel.add(campoLugar);
 		panel.add(labelFecha);
 		panel.add(dateChooser);
 
 		int result = JOptionPane.showConfirmDialog(null, panel,
-				"Editar Peregrino", JOptionPane.OK_OPTION,
+				"Editar Peregrinación", JOptionPane.OK_OPTION,
 				JOptionPane.PLAIN_MESSAGE);
 
 		if (result == JOptionPane.OK_OPTION) {
@@ -130,9 +126,12 @@ public class FormPeregrinacion {
 
 	public int eliminacionPeregrinacion() {
 
-		int result = JOptionPane.showConfirmDialog(panel,
-				"¡Va a eliminar una peregrinación. Se eliminará su lista de peregrinos!",
-				"Eliminación peregrinación", JOptionPane.WARNING_MESSAGE);
+		int result = JOptionPane
+				.showConfirmDialog(
+						panel,
+						"¡Va a eliminar una peregrinación. Se eliminará su lista de peregrinos!",
+						"Eliminación peregrinación",
+						JOptionPane.WARNING_MESSAGE);
 
 		return result;
 	}
@@ -173,11 +172,12 @@ public class FormPeregrinacion {
 		return peregrinacion;
 	}
 
-	private boolean isObjeto(Object objeto) {
-		if (objeto != null) {
-			return true;
-		} else {
-			return false;
+	private void instanciaLabels() {
+
+		if (!utilidades.isObjeto(labelLugar)
+				|| !utilidades.isObjeto(labelFecha)) {
+			labelLugar = new JLabel("Lugar");
+			labelFecha = new JLabel("Fecha");
 		}
 	}
 }
