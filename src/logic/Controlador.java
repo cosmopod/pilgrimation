@@ -2,11 +2,13 @@ package logic;
 
 import interfaces.IOperacionesBD;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 
 import clases.FormPeregrinacion;
@@ -50,15 +52,14 @@ public class Controlador {
 
 		int resultado = formPeregrinacion.eliminacionPeregrinacion();
 		if (resultado == JOptionPane.OK_OPTION) {
+			operacionesBD.eliminarPeregrinos(idPeregrinacion);
 			operacionesBD.eliminarPeregrinacion(idPeregrinacion);
-			/*
-			 * Se ha de escribir una función que permita la eliminación global
-			 * de peregrinos tras la eliminación de su peregrinación asociada.
-			 */
+
 			return true;
-		}else{
-			return false;
 		}
+
+		else
+			return false;
 
 	}
 
@@ -93,4 +94,47 @@ public class Controlador {
 		return modeloLista;
 	}
 
+	public boolean eliminacionPeregrino(JList listPeregrinos) {
+
+		int result = JOptionPane.showConfirmDialog(null,
+				"¿Desea eliminar este peregrino?");
+		if (result == JOptionPane.OK_OPTION) {
+
+			int idPeregrino = utilidades.peregrinoIdJlist(listPeregrinos);
+			operacionesBD.eliminarPeregrino(idPeregrino);
+			return true;
+		} else
+			return false;
+
+	}
+
+	public boolean edicionPeregrino(JComboBox comboBox, JList listaPeregrino) {
+
+		int idPeregrino = utilidades.peregrinoIdJlist(listaPeregrino);
+		if (idPeregrino != 0) {
+			try {
+				Peregrino ePeregrino = operacionesBD
+						.obtenerPeregrino(idPeregrino);
+				ePeregrino = formPeregrino.formularioEditar(ePeregrino,
+						comboBox);
+				if (ePeregrino != null) {
+					operacionesBD.editarPeregrino(idPeregrino,
+							ePeregrino.getIdPeregrinacion(),
+							ePeregrino.getNombre(), ePeregrino.getApellido1(),
+							ePeregrino.getApellido2(), ePeregrino.getBus(),
+							ePeregrino.getTipoHab(), ePeregrino.getCantidad(),
+							ePeregrino.isPagado(), ePeregrino.getTelefono());
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+			return true;
+		} else {
+
+			return false;
+		}
+
+	}
 }

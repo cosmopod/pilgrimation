@@ -230,6 +230,7 @@ public class Lista extends JFrame {
 				.peregrinoLista(comboBox);
 
 		listPeregrinos = new JList(miModelo);
+
 		scrollPane.setViewportView(listPeregrinos);
 
 		panel.setLayout(gl_panel);
@@ -256,8 +257,7 @@ public class Lista extends JFrame {
 			}
 		});
 
-		// Evento inserción peregrino
-		// ==================================================
+		// Evento inserción peregrino //////////////////////////
 		btnuevPeregrino.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controlador.formInsertarPeregrino(comboBox);
@@ -268,7 +268,38 @@ public class Lista extends JFrame {
 
 		});
 
-		// Evento inserción peregrinación =====================
+		// Evento eliminación peregrino ////////////////////////
+		listPeregrinos.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (!listPeregrinos.isSelectionEmpty()) {
+					if (controlador.eliminacionPeregrino(listPeregrinos)) {
+						DefaultListModel<String> nuevaLista = controlador
+								.peregrinoLista(comboBox);
+						listPeregrinos.setModel(nuevaLista);
+
+					} else
+						listPeregrinos.requestFocus();
+				}
+			}
+		});
+
+		// Evento de edición de Peregrino ////////////////////////
+		btnEditarPeregrino.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				if (controlador.edicionPeregrino(comboBox, listPeregrinos)) {
+					DefaultListModel<String> nuevaLista = controlador
+							.peregrinoLista(comboBox);
+					listPeregrinos.setModel(nuevaLista);
+
+				} else {
+					utilidades.avisoPeregrinacion();
+				}
+			}
+		});
+
+		// Evento inserción peregrinación ///////////////////////
 		btnNuevPeregrinacion.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
@@ -288,7 +319,7 @@ public class Lista extends JFrame {
 			}
 		});
 
-		// Evento pata edición de peregrinación
+		// Evento pata edición de peregrinación //////////////////
 		btnEditPeregrinacion.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
@@ -313,24 +344,25 @@ public class Lista extends JFrame {
 					} catch (SQLException e1) {
 						e1.printStackTrace();
 					}
-				}else{
-					JOptionPane.showMessageDialog(null, "¡Debe añadir antes una peregrinación");
+				} else {
+					utilidades.avisoPeregrinacion();
 				}
 
 			}
 		});
 
-		// Evento para la eliminación de peregrinación
+		// Evento para la eliminación de peregrinación //////////
 		comboBox.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
 
 				int idPeregrinacion = utilidades.peregrinacionIdCombo(comboBox);
 				if (idPeregrinacion != 0) {
-					if (controlador.formEliminarPeregrinacion(idPeregrinacion)) {
-						utilidades.refreshPeregrinacionCombo(comboBox);
-					}
+					controlador.formEliminarPeregrinacion(idPeregrinacion);
+					utilidades.refreshPeregrinacionCombo(comboBox);
+
 				} else {
+					utilidades.avisoPeregrinacion();
 					btnNuevPeregrinacion.requestFocus();
 				}
 			}

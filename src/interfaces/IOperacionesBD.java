@@ -14,17 +14,19 @@ public interface IOperacionesBD {
 			String apellido1, String apellido2, String bus, String tipoHab, int cantidad, boolean pagado, String telefono);
 
 	public void editarPeregrino(int idPeregrino, int idPeregrinacion,
-			String nombre, String appelido1, String apellido2, String bus,
+			String nombre, String apellido1, String apellido2, String bus,
 			String tipoHab, int cantidad, boolean pagado, String telefono);
 
-	public void eliminarPeregrino(int idPeregrino);
+	public boolean eliminarPeregrino(int idPeregrino);
+	
+	public boolean eliminarPeregrinos(int idPeregrinacion);
 
 	public void insertarPeregrinacion(String fecha, String lugar);
 
 	public void editarPeregrinacion(int idPeregrinacion, String lugar,
 			String fecha);
 
-	public void eliminarPeregrinacion(int idPeregrinacion);
+	public boolean eliminarPeregrinacion(int idPeregrinacion);
 
 	public void insertarActividad(int idPeregrinacion, String lugar,
 			String actividad, String fecha);

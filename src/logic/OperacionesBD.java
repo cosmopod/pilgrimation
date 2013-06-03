@@ -40,7 +40,6 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 
 		ejecutarConsulta(query);
 		cerrarConexion();
-		
 
 	}
 
@@ -48,13 +47,14 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 	public void editarPeregrino(int idPeregrino, int idPeregrinacion,
 			String nombre, String apellido1, String apellido2, String bus,
 			String tipoHab, int cantidad, boolean pagado, String telefono) {
+		int valorPagado = pagado?1:0;
 
-		String query = "UPDATE OR REPLACE peregrinos SET id_peregrinacion ="
+		String query = "UPDATE OR REPLACE peregrinos SET id_peregrinacion="
 				+ idPeregrinacion + ", nombre = " + q(nombre)
 				+ ", apellido1 = " + q(apellido1) + ", apellido2 ="
 				+ q(apellido2) + ", bus=" + q(bus) + ", tipo_hab ="
-				+ q(tipoHab) + ", cantidad=" + cantidad + ", pagado=" + pagado
-				+ ", telefono=" + telefono + " WHERE id =" + idPeregrino;
+				+ q(tipoHab) + ", cantidad=" + cantidad + ", pagado=" + valorPagado
+				+ ", telefono=" + q(telefono) + " WHERE id =" + idPeregrino;
 
 		ejecutarConsulta(query);
 		cerrarConexion();
@@ -62,11 +62,13 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 	}
 
 	@Override
-	public void eliminarPeregrino(int idPeregrino) {
+	public boolean eliminarPeregrino(int idPeregrino) {
 
 		String query = "DELETE FROM peregrinos WHERE id=" + idPeregrino;
 		ejecutarConsulta(query);
 		cerrarConexion();
+		return true;
+				
 
 	}
 
@@ -95,13 +97,13 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 	}
 
 	@Override
-	public void eliminarPeregrinacion(int idPeregrinacion) {
+	public boolean eliminarPeregrinacion(int idPeregrinacion) {
 
 		String query = "DELETE FROM peregrinaciones WHERE id="
 				+ idPeregrinacion;
 		ejecutarConsulta(query);
 		cerrarConexion();
-
+		return true;
 	}
 
 	@Override
@@ -142,7 +144,6 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 		String query = "DELETE FROM actividades WHERE id=" + idActividad;
 		ejecutarConsulta(query);
 		cerrarConexion();
-		
 
 	}
 
@@ -151,7 +152,7 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 
 		String query = "SELECT * FROM peregrinos WHERE id=" + idPeregrino;
 		resultSet = ejecutarConsulta(query);
-		
+
 		Peregrino peregrino = new Peregrino(idPeregrino,
 				resultSet.getInt("id_peregrinacion"),
 				resultSet.getString("nombre"),
@@ -161,6 +162,18 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 				resultSet.getBoolean("pagado"), resultSet.getString("telefono"));
 		cerrarConexion();
 		return peregrino;
+	}
+
+	@Override
+	public boolean eliminarPeregrinos(int idPeregrinacion) {
+
+		String query = "DELETE FROM peregrinos WHERE idPeregrinacion="
+				+ idPeregrinacion;
+		ejecutarConsulta(query);
+		cerrarConexion();
+		return true;
+		
+
 	}
 
 	@Override
@@ -291,28 +304,27 @@ public class OperacionesBD extends Conexion implements IOperacionesBD {
 		return peregrinaciones;
 	}
 
-	
 	private ResultSet ejecutarConsulta(String query) {
 		conectar();
-		
+
 		ResultSet resultado = null;
 		try {
 			resultado = consulta.executeQuery(query);
-			
+
 		} catch (SQLException e) {
 			// JOptionPane.showMessageDialog(null, e.getMessage());
 		}
-		
+
 		return resultado;
 	}
-	private void cerrarConexion(){
+
+	private void cerrarConexion() {
 		try {
 			conexion.close();
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, e.getErrorCode());
 		}
 	}
-	
 
 	// Método para entrecomillar los campos en las consultas
 	private String q(String s) {

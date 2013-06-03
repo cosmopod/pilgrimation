@@ -6,9 +6,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.swing.JComboBox;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 
 import clases.Peregrinacion;
+import clases.Peregrino;
 
 public class Utilidades {
 
@@ -35,6 +37,18 @@ public class Utilidades {
 
 	}
 
+	public int peregrinoIdJlist(JList lista) {
+		if (lista.getSelectedIndex() != -1) {
+
+			String cadenaPeregrino = lista.getSelectedValue().toString();
+			String[] arrayCadenaPeregrino = cadenaPeregrino.split("\\.");
+			int idPeregrino = Integer.parseInt(arrayCadenaPeregrino[0]);
+			return idPeregrino;
+		} else
+			return 0;
+
+	}
+
 	public void refreshPeregrinacionCombo(JComboBox comboBox) {
 
 		comboBox.removeAllItems();
@@ -49,6 +63,11 @@ public class Utilidades {
 
 		}
 
+	}
+
+	public void avisoPeregrinacion() {
+		JOptionPane.showMessageDialog(null,
+				"¡Debe añadir al menos una peregrinación!");
 	}
 
 	public boolean isObjeto(Object objeto) {

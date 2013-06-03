@@ -16,7 +16,7 @@ import javax.swing.SpinnerNumberModel;
 import logic.Utilidades;
 
 public class FormPeregrino {
-	private JComboBox comboBox;
+	private JComboBox comboBoxForm;
 	private Peregrino peregrino;
 	private JTextField campoNombre;
 	private JTextField apellido1;
@@ -41,11 +41,12 @@ public class FormPeregrino {
 	private JLabel labelLiquid;
 	private JLabel labelTelf;
 	private int idCombo;
+	
 
 	public FormPeregrino() {
 
 		super();
-		comboBox = new JComboBox();
+		comboBoxForm = new JComboBox();
 		peregrino = new Peregrino();
 		campoNombre = new JTextField();
 		apellido1 = new JTextField();
@@ -76,7 +77,8 @@ public class FormPeregrino {
 	}
 
 	public Peregrino formularioInsertar(JComboBox comboBox) {
-		// Creamos la caja del formulario
+
+		
 
 		panel = crearPanel(panel);
 		if (idCombo != 0) {
@@ -121,20 +123,80 @@ public class FormPeregrino {
 
 			return peregrino;
 		} else {
-			JOptionPane.showMessageDialog(null,
-					"¡Debe añadir antes una peregrinación");
+			utilidades.avisoPeregrinacion();
+			peregrino = null;
+			return peregrino;
+		}
+	}
+
+	public Peregrino formularioEditar(Peregrino peregrino, JComboBox comboBox) {
+		
+		campoNombre.setText(peregrino.getNombre());
+		apellido1.setText(peregrino.getApellido1());
+		apellido2.setText(peregrino.getApellido2());
+		spinnerBus.setValue(Integer.valueOf(peregrino.getBus()));
+		spnCantidadLiquidada.setValue(peregrino.getCantidad());
+		textTelefono.setText(peregrino.getTelefono());
+
+		panel = crearPanel(panel);
+
+		if (idCombo != 0) {
+			
+			int result = JOptionPane.showConfirmDialog(null, panel,
+					"Insertar Peregrino", JOptionPane.OK_OPTION,
+					JOptionPane.PLAIN_MESSAGE);
+
+			if (result == JOptionPane.OK_OPTION) {
+				String nombre = campoNombre.getText();
+				if (nombre.length() > 0) {
+
+					String stringApell1 = apellido1.getText();
+					String stringApell2 = apellido2.getText();
+					String strinBus = spinnerBus.getValue().toString();
+					String strinHab = comboHabitacion.getSelectedItem()
+							.toString();
+					int idPeregrinacion = utilidades
+							.peregrinacionIdCombo(comboBoxForm);
+					
+					int cantLiquidada = Integer.parseInt(spnCantidadLiquidada
+							.getValue().toString());
+					boolean liquidacion = false;
+					String estadoLiquidacion = comboLiquidacion
+							.getSelectedItem().toString();
+					if (estadoLiquidacion.equalsIgnoreCase("Pagado")) {
+						liquidacion = true;
+					} else {
+						liquidacion = false;
+					}
+					String telefono = textTelefono.getText();
+
+					
+					peregrino = setPeregrino(nombre, stringApell1,
+							stringApell2, idPeregrinacion, liquidacion,
+							telefono, strinBus, cantLiquidada, strinHab);
+				} else {
+					JOptionPane.showMessageDialog(panel,
+							"¡Debe introducir al menos un nombre!", "Atención",
+							JOptionPane.WARNING_MESSAGE);
+					this.formularioEditar(peregrino, comboBox);
+				}
+			} else {
+				peregrino = null;
+			}
+			return peregrino;
+		} else {
+
 			peregrino = null;
 			return peregrino;
 		}
 	}
 
 	private JPanel crearPanel(JPanel jpanel) {
-
-		utilidades.refreshPeregrinacionCombo(comboBox);
-		idCombo = utilidades.peregrinacionIdCombo(comboBox);
+		utilidades.refreshPeregrinacionCombo(comboBoxForm);
+		idCombo = utilidades.peregrinacionIdCombo(comboBoxForm);
 		instanciaLabels();
 		panel.add(labelPeregrinacion);
-		panel.add(comboBox);
+		panel.add(comboBoxForm);
 		panel.add(labelNombre);
 		panel.add(campoNombre);
 		panel.add(labelApellido1);
